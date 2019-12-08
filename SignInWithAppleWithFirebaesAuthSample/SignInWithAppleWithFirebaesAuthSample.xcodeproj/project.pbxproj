@@ -15,7 +15,7 @@
 		5312D785239B880C00110E34 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5312D784239B880C00110E34 /* LoginService.swift */; };
 		5312D787239B881600110E34 /* LoginServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5312D786239B881600110E34 /* LoginServiceImpl.swift */; };
 		5312D789239B8DD700110E34 /* LoginViewModelImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5312D788239B8DD700110E34 /* LoginViewModelImpl.swift */; };
-		5312D78B239B92A000110E34 /* ASAuthorizationController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5312D78A239B92A000110E34 /* ASAuthorizationController+Rx.swift */; };
+		53308999239FE41F00EE38F3 /* AuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53308998239FE41F00EE38F3 /* AuthenticationError.swift */; };
 		533C8123239B8464002C7186 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533C8122239B8464002C7186 /* AppDelegate.swift */; };
 		533C8125239B8464002C7186 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533C8124239B8464002C7186 /* SceneDelegate.swift */; };
 		533C8127239B8464002C7186 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533C8126239B8464002C7186 /* ViewController.swift */; };
@@ -71,7 +71,7 @@
 		5312D784239B880C00110E34 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		5312D786239B881600110E34 /* LoginServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginServiceImpl.swift; sourceTree = "<group>"; };
 		5312D788239B8DD700110E34 /* LoginViewModelImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelImpl.swift; sourceTree = "<group>"; };
-		5312D78A239B92A000110E34 /* ASAuthorizationController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ASAuthorizationController+Rx.swift"; sourceTree = "<group>"; };
+		53308998239FE41F00EE38F3 /* AuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationError.swift; sourceTree = "<group>"; };
 		533C811F239B8464002C7186 /* SignInWithAppleWithFirebaesAuthSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignInWithAppleWithFirebaesAuthSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		533C8122239B8464002C7186 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		533C8124239B8464002C7186 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -178,6 +178,14 @@
 			path = Impl;
 			sourceTree = "<group>";
 		};
+		53308997239FE40700EE38F3 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				53308998239FE41F00EE38F3 /* AuthenticationError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
 		533C8116239B8464002C7186 = {
 			isa = PBXGroup;
 			children = (
@@ -266,9 +274,9 @@
 				5312D782239B87E200110E34 /* Domain */,
 				5312D77A239B873700110E34 /* UseCase */,
 				533C8153239B85B0002C7186 /* Component */,
+				53308997239FE40700EE38F3 /* Error */,
 				533C8146239B857D002C7186 /* UserAccount.h */,
 				533C8147239B857D002C7186 /* Info.plist */,
-				5312D78A239B92A000110E34 /* ASAuthorizationController+Rx.swift */,
 				53B6D54F239B93720085D64A /* RxASAuthorizationControllerDelegateProxy.swift */,
 			);
 			path = UserAccount;
@@ -508,7 +516,7 @@
 				5312D77F239B879B00110E34 /* IsLoginUseCaseImpl.swift in Sources */,
 				53B6D550239B93720085D64A /* RxASAuthorizationControllerDelegateProxy.swift in Sources */,
 				5312D785239B880C00110E34 /* LoginService.swift in Sources */,
-				5312D78B239B92A000110E34 /* ASAuthorizationController+Rx.swift in Sources */,
+				53308999239FE41F00EE38F3 /* AuthenticationError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

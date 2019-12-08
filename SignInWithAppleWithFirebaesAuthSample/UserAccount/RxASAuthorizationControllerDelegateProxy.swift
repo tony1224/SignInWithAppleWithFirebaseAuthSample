@@ -11,20 +11,16 @@ import RxSwift
 import RxCocoa
 import AuthenticationServices
 
-// currentDelegateとsetCurrentDelegateの役割を担います
 @available(iOS 13.0, *)
 extension ASAuthorizationController: HasDelegate {
     public typealias Delegate = ASAuthorizationControllerDelegate
 }
 
-// DelegateProxy, DelegateProxyType, ASAuthorizationControllerDelegateを継承
-// DelegateをRxに対応させるために、元となるDelegateも継承が必須です
 @available(iOS 13.0, *)
 public class RxASAuthorizationControllerDelegateProxy: DelegateProxy<ASAuthorizationController, ASAuthorizationControllerDelegate>,
     DelegateProxyType,
     ASAuthorizationControllerDelegate {
 
-    // 初期化処理
     public init(controller: ASAuthorizationController) {
         super.init(
             parentObject: controller,
@@ -32,7 +28,6 @@ public class RxASAuthorizationControllerDelegateProxy: DelegateProxy<ASAuthoriza
         )
     }
 
-    // 必須のstaticメソッド
     public static func registerKnownImplementations() {
         self.register { (controller) -> RxASAuthorizationControllerDelegateProxy in
             RxASAuthorizationControllerDelegateProxy(controller: controller)
@@ -65,4 +60,20 @@ public class RxASAuthorizationControllerDelegateProxy: DelegateProxy<ASAuthoriza
 
     deinit { self.didComplete.on(.completed) }
 
+}
+
+@available(iOS 13.0, *)
+extension Reactive where Base: ASAuthorizationController {
+    
+    public var delegate: DelegateProxy<ASAuthorizationController, ASAuthorizationControllerDelegate> {
+        return RxASAuthorizationControllerDelegateProxy.proxy(for: base)
+    }
+    
+    public var didComplete: Observable<(ASAuthorization?, Error?)> {
+        return RxASAuthorizationControllerDelegateProxy
+            .proxy(for: base)
+            .didComplete
+            .asObservable()
+    }
+    
 }

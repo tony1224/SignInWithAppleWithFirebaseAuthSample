@@ -13,67 +13,91 @@ import CryptoKit
 
 final class LoginServiceImpl: LoginService {
 
-    // Unhashed nonce.
-    fileprivate var currentNonce: String?
+    private let prividerID = "apple.com"
+    private var nonce: String?
+    
+    func login(context: UIViewController?) -> Completable {
+        let authorizationController = initAuthorizationController(with: context)
+                 
+        return authorizationController
+            .rx
+            .didComplete
+            .flatMap({ [weak self] (authorization, error) -> Completable in
+                if let error = error {
+                    return .error(error)
+                }
+                guard
+                    let self = self,
+                    let credential = self.initCredential(with: authorization)
+                else {
+                    throw AuthenticationError.failedToCreateCredential
+                }
+                return self.signIn(with: credential)
+            })
+            .asCompletable()
+    }
     
     @available(iOS 13.0, *)
-    func login(context: UIViewController?) -> Completable {
+    private func signIn(with credential: AuthCredential) -> Completable {
+        return Completable.create { (emitter) -> Disposable in
+            
+            Auth.auth().signIn(with: credential) { (authResult, error) in
+                if error != nil {
+                    return emitter(.error(error!))
+                }
+                return emitter(.completed)
+            }
+
+            return Disposables.create()
+        }
+    }
+    
+    // MARK: - Initializer
+    
+    @available(iOS 13.0, *)
+    private func initAuthorizationController(with context: UIViewController?) -> ASAuthorizationController {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
-        let nonce = randomNonceString()
-        currentNonce = nonce
+        nonce = randomNonceString()
         
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
-        request.nonce = sha256(nonce)
+        
+        if let nonce = self.nonce {
+            request.nonce = sha256(nonce)
+        }
         
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         
-        // ログインに成功した後でATをSVに返す処理が必要
         if let controller = context as? ASAuthorizationControllerPresentationContextProviding {
             authorizationController.presentationContextProvider = controller
         }
         authorizationController.performRequests()
         
         return authorizationController
-            .rx
-            .didComplete
-            .flatMap({ [weak self] (authorization, error) -> Completable in
-                // TODO: ここら辺の処理はQiita投稿前にブラッシュアップ
-                guard let self = self else { return .empty() }
-                if error != nil {
-                    return .error(error!)
-                }
-                guard
-                    let appleIDCredential = authorization?.credential as? ASAuthorizationAppleIDCredential,
-                    let nonce = self.currentNonce,
-                    let appleIDToken = appleIDCredential.identityToken,
-                    let idTokenString = String(data: appleIDToken, encoding: .utf8)
-                else {
-                    return .error(error!)
-                }
-                let credential = OAuthProvider.credential(
-                    withProviderID: "apple.com",
-                    idToken: idTokenString,
-                    rawNonce: nonce
-                )
-                return self.storeLoginWithApple(appleIDCredential: credential)
-            })
-            .asCompletable()
     }
     
     @available(iOS 13.0, *)
-    private func storeLoginWithApple(appleIDCredential: AuthCredential) -> Completable {
-        return Completable.create { (emitter) -> Disposable in
-            Auth.auth().signIn(with: appleIDCredential) { (authResult, error) in
-                if error != nil {
-                    return emitter(.error(error!))
-                }
-                return emitter(.completed)
-            }
-            return Disposables.create()
+    private func initCredential(with authorization: ASAuthorization?) -> AuthCredential? {
+        guard
+            let appleIDCredential = authorization?.credential as? ASAuthorizationAppleIDCredential,
+            let nonce = self.nonce,
+            let appleIDToken = appleIDCredential.identityToken,
+            let idTokenString = String(data: appleIDToken, encoding: .utf8)
+        else {
+            return nil
         }
+
+        return OAuthProvider.credential(
+            withProviderID: prividerID,
+            idToken: idTokenString,
+            rawNonce: nonce
+        )
     }
-    
+
+}
+
+extension LoginServiceImpl {
+
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         let charset: Array<Character> =
