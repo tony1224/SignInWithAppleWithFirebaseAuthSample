@@ -42,8 +42,8 @@ final class LoginServiceImpl: LoginService {
         return Completable.create { (emitter) -> Disposable in
             
             Auth.auth().signIn(with: credential) { (authResult, error) in
-                if error != nil {
-                    return emitter(.error(error!))
+                if let error = error {
+                    return emitter(.error(error))
                 }
                 return emitter(.completed)
             }
